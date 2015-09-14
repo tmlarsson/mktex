@@ -1,0 +1,122 @@
+#!/bin/bash
+# Use > 1 to consume two FILENAMEs per pass in the loop (e.g. each
+# FILENAME has a corresponding value to go with it).
+# Use > 0 to consume one or more FILENAMEs per pass in the loop (e.g.
+# some FILENAMEs don't have a corresponding value to go with it such
+# as in the --default example).
+# note: if this is set to > 0 the /etc/hosts part is not recognized ( may be a bug )
+
+# Initial setup
+BIBER=False
+CLEAN=False
+
+if [ -z "$1" ]; then
+    echo "No input..."
+    exit 1
+fi
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -f|--file)
+    if [ ! -f "${2}.tex" ]; then
+        echo "No such file exists"
+        exit 1  
+    fi
+    FILENAME="$2"
+    shift # past argument
+    ;;
+    -b|--biber)
+    BIBER=true
+    shift # past argument
+    ;;
+    -c|--clean)
+    CLEAN=true
+    shift # past argument
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past FILENAME or value
+done
+
+if [ "$BIBER" == true ]; then
+    echo "Compile using pdflatex and biber..."
+else
+    echo "Complie using pdflatex..."
+fi
+
+exit 1
+# Compile document
+pdflatex -shell-escape -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep something
+# grep somthing is just to kill the output.
+
+if [ "$biber" == 1 ]; then
+    biber "$FILENAME"  | grep something
+fi
+
+
+result=$(max_print_line=2048 pdflatex -shell-escape -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 
+
+if [ -z "$result" ]; then
+    echo '[OK]'
+else
+    echo ""
+    echo "$result"
+    echo ""
+fi
+
+# Remove unnessesary files.
+if [ "$CLEAN" == true ]; then
+    echo "Clean"
+    if [ -f "${FILENAME}.log" ]; then
+        rm *.log
+    fi
+    if [ -f "${FILENAME}.lof" ]; then
+        rm *.lof
+    fi
+    if [ -f "${FILENAME}.blg" ]; then
+        rm *.blg
+    fi
+    if [ -f "${FILENAME}.toc" ]; then
+        rm *.toc
+    fi
+    if [ -f "${FILENAME}.out" ]; then
+        rm *.out
+    fi
+
+    if [ -f "${FILENAME}.bbl" ]; then
+        rm *.bbl
+    fi
+    if [ -f "${FILENAME}.aux" ]; then
+        rm *.aux
+    fi
+    if [ -f "${FILENAME}.bcf" ]; then
+        rm *.bcf
+    fi
+    if [ -f "${FILENAME}.run.xml" ]; then
+        rm *.run.xml
+    fi
+    if [ -f "${FILENAME}.tex.bak" ]; then
+        rm *.tex.bak
+    fi
+    if [ -f "${FILENAME}.fls" ]; then
+        rm *.fls
+    fi
+    if [ -f "${FILENAME}.fdb_latexmk" ]; then
+        rm *.fdb_latexmk
+    fi
+fi
+echo "Open file? [yes/no]"
+read -r openFile
+
+
+if [[ $openFile == "yes" || $openFile == "y" ]]; then
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        xdg-open "${FILENAME}.pdf"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        open "${FILENAME}.pdf"
+    fi
+fi
