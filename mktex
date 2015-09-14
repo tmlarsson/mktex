@@ -9,7 +9,7 @@
 # Initial setup
 BIBER=False
 CLEAN=False
-MINTED="" # -shell-escape only needs to be used when minted is used.
+MINTED= # -shell-escape only needs to be used when minted is used.
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -22,13 +22,6 @@ do
 key="$1"
 
 case $key in
-    -f|--filename)
-    if [ ! -f "$2.tex" ]; then
-        echo "No such file exists"
-        exit 1  
-    fi
-    FILENAME="$2"
-    ;;
     -b|--biber)
     BIBER=true
     ;;
@@ -42,6 +35,11 @@ case $key in
     MINTED="-shell-escape"
     ;;
     *)
+    if [ ! -f "$1.tex" ]; then
+        echo "No such file exists"
+        exit 1  
+    fi
+    FILENAME="$1"
     ;;
 esac
 shift # past argument or value
@@ -62,13 +60,13 @@ if [ "$HELP" == true ]; then
 fi
 
 if [ "$BIBER" == true ]; then
-    echo "Compile using pdflatex and biber..."
+    echo -n "Compile using pdflatex and biber..."
 else
-    echo "Complie using pdflatex..."
+    echo -n "Complie using pdflatex..."
 fi
 
 # Compile document
-pdflatex "$MINTED" -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep something
+pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep something
 # grep somthing is just to kill the output.
 
 if [ "$biber" == 1 ]; then
@@ -76,7 +74,7 @@ if [ "$biber" == 1 ]; then
 fi
 
 
-result=$(max_print_line=2048 pdflatex "$MINTED" -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 
+result=$(max_print_line=2048 pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 
 
 if [ -z "$result" ]; then
     echo '[OK]'
@@ -128,7 +126,6 @@ if [ "$CLEAN" == true ]; then
 fi
 echo "Open file? [yes/no]"
 read -r openFile
-
 
 if [[ $openFile == "yes" || $openFile == "y" ]]; then
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
