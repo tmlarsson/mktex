@@ -5,11 +5,14 @@
 # some FILENAMEs don't have a corresponding value to go with it such
 # as in the --default example).
 # note: if this is set to > 0 the /etc/hosts part is not recognized ( may be a bug )
+####################################################################################
+# Source: https://github.com/tmlarsson/mktex
+####################################################################################
 
 # Initial setup
 BIBER=False
 CLEAN=False
-MINTED= # -shell-escape only needs to be used when minted is used.
+MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -42,14 +45,14 @@ case $key in
     FILENAME="$1"
     ;;
 esac
-shift # past argument or value
+shift # go to next argument or value
 done
 
 if [ "$HELP" == true ]; then
     echo "mktex - Compiles LaTeX documents with pdfLaTeX"
     echo " "
     echo "Usage example: [possible flags]"
-    echo "mktex -f filename [-b -c -m]"
+    echo "mktex filename [-b -c -m]"
     echo " "
     echo "options:"
     echo "-h, --help            show brief help"
