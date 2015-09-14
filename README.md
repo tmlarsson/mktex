@@ -8,3 +8,9 @@ This is done by passing the filename, without the '.tex' ending after the '-f' f
 If one want to compile using biber, simply pass along the '-b' flag.
 
 If you want the script to remove all 'unnessesary' files that comes along with the compilation, pass along the '-c' flag.
+
+Example usage:
+
+mktex -f paper -b -c
+
+which compiles a document called 'paper' 
