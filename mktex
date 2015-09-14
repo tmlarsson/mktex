@@ -131,7 +131,6 @@ read -r openFile
 
 
 if [[ $openFile == "yes" || $openFile == "y" ]]; then
-    
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         xdg-open "${FILENAME}.pdf"
     elif [[ "$OSTYPE" == "darwin"* ]]; then
