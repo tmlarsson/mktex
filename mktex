@@ -48,7 +48,6 @@ else
     echo "Complie using pdflatex..."
 fi
 
-exit 1
 # Compile document
 pdflatex -shell-escape -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep something
 # grep somthing is just to kill the output.
