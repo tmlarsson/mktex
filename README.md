@@ -1,7 +1,7 @@
 # mktex
 A script to simplify compilation of LaTeX documents in the terminal.
 
-The script uses pdfLaTeX and biber to compile .tex documents.
+The script uses pdfLaTeX (and biber) to compile .tex documents (with references).
 
 Usage example: [possible flags]<br />
   mktex filename [-b -c -m]
