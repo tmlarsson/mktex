@@ -42,11 +42,19 @@ case $key in
     OPEN=true
     ;;
     *)
-    if [ ! -f "$1.tex" ]; then
+    TEMP="$1"
+    if [[ "$1" =~ ".tex" ]]; then
+        TEMP="${1%.tex}"
+    fi
+    if [[ "$1" =~ "." ]]; then
+        TEMP="${1%.}"
+    fi
+    if [ ! -f "$TEMP.tex" ]; then
         echo "No such file exists"
         exit 1  
     fi
-    FILENAME="$1"
+
+    FILENAME="$TEMP"
     ;;
 esac
 shift # go to next argument or value
