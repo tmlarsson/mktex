@@ -12,7 +12,7 @@ options: <br />
   -c, --clean           remove unnecessary files<br />
   -m, --minted          Use this flag to use minted<br />
   
-The filename can have three formats:
+The filename can have three formats:<br />
   'filename'<br />
   'filename.'<br />
   'filename.tex'<br />
