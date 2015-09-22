@@ -11,6 +11,11 @@ options: <br />
   -b, --biber           compile using biber<br />
   -c, --clean           remove unnecessary files<br />
   -m, --minted          Use this flag to use minted<br />
+  
+The filename can have three formats:
+  'filename'<br />
+  'filename.'<br />
+  'filename.tex'<br />
 
 The minted flag, '-m', is used due to a potential security risk of using the flag '-shell-escape' with pdfLaTeX. With '-shell-escape' packages can potentially get access to the terminal to execute commands. 
 
