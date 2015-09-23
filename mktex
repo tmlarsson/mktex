@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 # Use > 1 to consume two FILENAMEs per pass in the loop (e.g. each
 # FILENAME has a corresponding value to go with it).
 # Use > 0 to consume one or more FILENAMEs per pass in the loop (e.g.
@@ -37,16 +38,32 @@ case $key in
     -m|--minted)
     MINTED="-shell-escape"
     ;;
+    -o|--open)
+    OPEN=true
+    ;;
     *)
-    if [ ! -f "$1.tex" ]; then
+    TEMP="$1"
+    if [[ "$1" =~ ".tex" ]]; then
+        TEMP="${1%.tex}"
+    fi
+    if [[ "$1" =~ "." ]]; then
+        TEMP="${1%.}"
+    fi
+    if [ ! -f "$TEMP.tex" ]; then
         echo "No such file exists"
         exit 1  
     fi
-    FILENAME="$1"
+
+    FILENAME="$TEMP"
     ;;
 esac
 shift # go to next argument or value
 done
+
+if [ -z $FILENAME ]; then
+    echo "No filename was specified..."
+    exit 0
+fi
 
 if [ "$HELP" == true ]; then
     echo "mktex - Compiles LaTeX documents with pdfLaTeX"
@@ -84,7 +101,6 @@ if [ -z "$result" ]; then
 else
     echo ""
     echo "$result"
-    echo ""
 fi
 
 # Remove unnessesary files.
@@ -127,10 +143,8 @@ if [ "$CLEAN" == true ]; then
         rm *.fdb_latexmk
     fi
 fi
-echo "Open file? [yes/no]"
-read -r openFile
 
-if [[ $openFile == "yes" || $openFile == "y" ]]; then
+if [ "$OPEN" == true ]; then
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         xdg-open "${FILENAME}.pdf"
     elif [[ "$OSTYPE" == "darwin"* ]]; then
