@@ -65,7 +65,7 @@ fi
 if [ "$BIBER" == true ]; then
     echo -n "Compile using pdflatex and biber..."
 else
-    echo -n "Complie using pdflatex..."
+    echo -n "Compile using pdflatex..."
 fi
 
 # Compile document
