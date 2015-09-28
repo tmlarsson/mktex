@@ -24,7 +24,7 @@ fi
 while [[ $# > 0 ]]
 do
 key="$1"
-
+echo $key
 case $key in
     -b|--biber)
     BIBER=true
@@ -43,11 +43,11 @@ case $key in
     ;;
     *)
     TEMP="$1"
-    if [[ "$1" =~ ".tex" ]]; then
-        TEMP="${1%.tex}"
+    if [[ $TEMP =~ ".tex" ]]; then
+        TEMP=${TEMP%.tex}
     fi
-    if [[ "$1" =~ "." ]]; then
-        TEMP="${1%.}"
+    if [[ "$TEMP" =~ "." ]]; then
+        TEMP=${TEMP%.}
     fi
     if [ ! -f "$TEMP.tex" ]; then
         echo "No such file exists"
@@ -60,10 +60,6 @@ esac
 shift # go to next argument or value
 done
 
-if [ -z $FILENAME ]; then
-    echo "No filename was specified..."
-    exit 0
-fi
 
 if [ "$HELP" == true ]; then
     echo "mktex - Compiles LaTeX documents with pdfLaTeX"
@@ -79,10 +75,15 @@ if [ "$HELP" == true ]; then
     exit 0
 fi
 
+if [ -z $FILENAME ]; then
+    echo "No filename was specified..."
+    exit 0
+fi
+
 if [ "$BIBER" == true ]; then
     echo -n "Compile using pdflatex and biber..."
 else
-    echo -n "Compile using pdflatex..."
+    echo -n "Complie using pdflatex..."
 fi
 
 # Compile document
