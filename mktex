@@ -90,7 +90,7 @@ fi
 pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep something
 # grep somthing is just to kill the output.
 
-if [ "$biber" == 1 ]; then
+if [ "$BIBER" == true ]; then
     biber "$FILENAME"  | grep something
 fi
 
