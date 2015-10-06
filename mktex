@@ -88,7 +88,6 @@ fi
 # Compile document
 echo -n "pdflatex: First sweep..."
 pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null
-# grep somthing is just to kill the output.
 echo "[OK]"
 
 if [ "$BIBER" == true ]; then
