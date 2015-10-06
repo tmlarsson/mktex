@@ -24,7 +24,6 @@ fi
 while [[ $# > 0 ]]
 do
 key="$1"
-
 case $key in
     -b|--biber)
     BIBER=true
@@ -81,27 +80,64 @@ if [ -z $FILENAME ]; then
 fi
 
 if [ "$BIBER" == true ]; then
-    echo -n "Compile using pdflatex and biber..."
+    echo "Compile using pdflatex and biber..."
 else
-    echo -n "Complie using pdflatex..."
+    echo "Complie using pdflatex..."
 fi
 
 # Compile document
-pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep something
+echo -n "pdflatex: First sweep..."
+pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null
 # grep somthing is just to kill the output.
+echo "[OK]"
 
 if [ "$BIBER" == true ]; then
-    biber "$FILENAME"  | grep something
+    runAgain=true
+    while [ "$runAgain" == true ]; do
+        echo -n "biber..."
+        bibRES=$(biber "$FILENAME" 2>/tmp/biber)
+        bibERR=$(</tmp/biber)
+        echo "[OK]"
+
+        # Check fo data bug in biber
+        vartest=$(echo "$bibERR" | grep "no data found")
+        if [ ! -z "$vartest" ]; then
+            rm -rf `biber --cache`
+            echo ""
+            echo "Removed biber cache..."
+            echo "Compiling again..."
+            runAgain=true
+        else
+            runAgain=false
+        fi
+    done
 fi
 
+echo -n "pdflatex: Second sweep..."
 
 result=$(max_print_line=2048 pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 
+echo "[OK]"
 
 if [ -z "$result" ]; then
-    echo '[OK]'
+    echo 'Compiled without errors!'
+else
+    echo "Compiled with errors in pdflatex..."
+    echo""
+    echo "$result"
+fi
+
+if [ $BIBER == true ]; then
+if [ -z "$bibRES" ]; then
+    echo ""
+    echo 'Compiled without errors in biber!'
 else
     echo ""
-    echo "$result"
+    echo "Compiled with errors in biber..."
+    echo""
+    echo "$bibRES"
+    echo ""
+    echo "$bibERR"
+fi
 fi
 
 # Remove unnessesary files.
