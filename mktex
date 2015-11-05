@@ -88,7 +88,7 @@ fi
 # However, since the program is open source you can always check
 # the source code to inspect my work. This should always be done
 # since you should NEVER run some random code of the internet 
-# which requires the sudo command. NEVER!
+# which requires the sudo command without trusting it. NEVER!
 if [ ! -z $update ]; then
     cd /tmp
     touch tmpupdate.sh
