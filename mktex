@@ -73,6 +73,7 @@ if [ "$HELP" == true ]; then
     echo "-c, --clean           remove unnecessary files"
     echo "-m, --minted          Use this flag to use minted"
     echo "--tikz                Compile only TikZ picures in standalone mode"
+    echo "-std=lua              Changes the default compiler to lualatex"
     exit 0
 fi
 
