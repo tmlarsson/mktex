@@ -92,6 +92,7 @@ if [ ! -z $update ]; then
     echo "chmod +x /usr/local/bin/mktex" >> tmpupdate.sh
     chmod +x tmpupdate.sh
     ./tmpupdate.sh
+    rm tmpupdate.sh
     exit 0
 fi
 
