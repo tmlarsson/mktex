@@ -40,6 +40,9 @@ case $key in
     -o|--open)
     OPEN=true
     ;;
+    --tikz)
+    TIKZ=true
+    ;;
     *)
     TEMP="$1"
     if [[ $TEMP =~ ".tex" ]]; then
@@ -71,6 +74,7 @@ if [ "$HELP" == true ]; then
     echo "-b, --biber           compile using biber"
     echo "-c, --clean           remove unnecessary files"
     echo "-m, --minted          Use this flag to use minted"
+    echo "--tikz                Compile only TikZ picures in standalone mode"
     exit 0
 fi
 
@@ -79,13 +83,32 @@ if [ -z $FILENAME ]; then
     exit 0
 fi
 
+if [ "$TIKZ" == true ]; then
+    echo -n "Compiling TikZ picure using Lualatex..."
+
+    tikzresult=$(max_print_line=2048 lualatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$")
+
+    if [ -z "$tikzresult" ]; then
+        echo "[OK]"
+    else
+        echo ""
+        echo ""
+        echo "Found some errors..."
+        echo ""
+        echo $tikzresult
+    fi    
+fi
+
+
+# Compile document only if not in TIKZ mode
+if [ -z "$TIKZ" ]; then
+
 if [ "$BIBER" == true ]; then
     echo "Compile using pdflatex and biber..."
 else
     echo "Compile using pdflatex..."
 fi
 
-# Compile document
 echo -n "pdflatex: First sweep..."
 pdflatex $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null
 echo "[OK]"
@@ -138,7 +161,7 @@ else
     echo "$bibERR"
 fi
 fi
-
+fi
 # Remove unnessesary files.
 if [ "$CLEAN" == true ]; then
     if [ -f "${FILENAME}.log" ]; then
