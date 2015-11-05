@@ -77,20 +77,30 @@ if [ "$HELP" == true ]; then
     echo "-m, --minted          Use this flag to use minted"
     echo "--tikz                Compile only TikZ picures in standalone mode"
     echo "-std=lua              Changes the default compiler to lualatex"
-    echo "--update              Updates the script to the newest found on github"
+    echo "--update              Updates mktex into the newest found on github"
     exit 0
 fi
 
-# update mktex
+# Updates mktex. This creates a script in the tmp folder
+# that will fetch the newest file from github.
+# This deos however require the user to use the sudo 
+# command to move the new file to the /usr/local/bin folder.
+# However, since the program is open source you can always check
+# the source code to inspect my work if you feel unsafe.
 if [ ! -z $update ]; then
     cd /tmp
     touch tmpupdate.sh
     echo "#!/bin/bash" > tmpupdate.sh
     #echo "cd" >> tmpupdate.sh
-    echo "git clone https://github.com/tmlarsson/mktex" >> tmpupdate.sh
-    echo "cd mktex && mv mktex /usr/local/bin" >> tmpupdate.sh
+    echo "if git clone https://github.com/tmlarsson/mktex" >> tmpupdate.sh
+    echo "then" >> tmpupdate.sh
+    echo "cd mktex && sudo mv mktex /usr/local/bin" >> tmpupdate.sh
     echo "cd ../ && rm -rf mktex" >> tmpupdate.sh
-    echo "chmod +x /usr/local/bin/mktex" >> tmpupdate.sh
+    echo "sudo chmod +x /usr/local/bin/mktex" >> tmpupdate.sh
+    echo "else" >> tmpupdate.sh
+    echo "echo && echo Failed to get update..." >> tmpupdate.sh
+    echo "rm -rf mktex" >> tmpupdate.sh
+    echo "fi" >> tmpupdate.sh
     chmod +x tmpupdate.sh
     ./tmpupdate.sh
     rm tmpupdate.sh
