@@ -83,10 +83,12 @@ fi
 
 # Updates mktex. This creates a script in the tmp folder
 # that will fetch the newest file from github.
-# This deos however require the user to use the sudo 
+# This does however require the user to use the sudo 
 # command to move the new file to the /usr/local/bin folder.
 # However, since the program is open source you can always check
-# the source code to inspect my work if you feel unsafe.
+# the source code to inspect my work. This should always be done
+# since you should NEVER run some random code of the internet 
+# which requires the sudo command. NEVER!
 if [ ! -z $update ]; then
     cd /tmp
     touch tmpupdate.sh
