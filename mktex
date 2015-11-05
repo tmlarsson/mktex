@@ -109,6 +109,10 @@ if [ ! -z $update ]; then
     exit 0
 fi
 
+# Check for existance of the compiler. If it does not exist,
+# the script will exit.
+type $compiler >/dev/null 2>&1 || { echo >&2 "I require $compiler but it's not installed. Aborting."; exit 1; }
+
 # Check if no filename is specified.
 # If no filename is given then exit the program
 if [ -z $FILENAME ]; then
