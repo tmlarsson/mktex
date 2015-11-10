@@ -90,6 +90,12 @@ fi
 # since you should NEVER run some random code of the internet 
 # which requires the sudo command without trusting it. NEVER!
 if [ ! -z $update ]; then
+    # Checks if update is run as root. 
+    # Otherwise it terminates the script
+    if [[ $EUID -ne 0 ]]; then
+        echo "Update must be run as root" 1>&2
+        exit 1
+    fi
     cd /tmp
     touch tmpupdate.sh
     echo "#!/bin/bash" > tmpupdate.sh
