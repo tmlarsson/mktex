@@ -5,8 +5,8 @@ clear
 ###################################################################################
 
 # Initial setup
-BIBER=False
-CLEAN=False
+BIBER=false
+CLEAN=false
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 compiler="pdflatex"
 
