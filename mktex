@@ -1,9 +1,8 @@
 #!/bin/bash
-clear
 ###################################################################################
 # Source: https://github.com/tmlarsson/mktex
 ###################################################################################
-
+clear
 # Initial setup
 BIBER=False
 CLEAN=False
@@ -43,6 +42,9 @@ case $key in
     ;;
     --update)
     update=true
+    ;;
+    --gettex)
+    gettex=true
     ;;
     *)
     TEMP="$1"
@@ -114,6 +116,33 @@ if [ ! -z $update ]; then
     rm tmpupdate.sh
     exit 0
 fi
+
+
+# Fetches the latex template from kwlg on github.
+if [ ! -z $gettex ]; then
+    dir=$PWD
+    echo -n "Fetching the template..."
+    
+    cd /tmp
+
+    if [ -d "latex-template" ]; then
+        mv latex-template latex-template-moved
+    fi
+    
+    if git clone https://github.com/kwlg/latex-template &>/dev/null
+    then
+        echo "[OK]"
+        cd latex-template
+        mv *.tex $dir
+        cd ..
+        rm -rf latex-template
+    else
+        echo ""
+        echo "Failed to get template..."
+    fi
+    exit 0
+fi
+
 
 # Check for existance of the compiler. If it does not exist,
 # the script will exit.
