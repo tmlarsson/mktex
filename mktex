@@ -5,8 +5,8 @@ clear
 ###################################################################################
 
 # Initial setup
-BIBER=false
-CLEAN=false
+BIBER=False
+CLEAN=False
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 compiler="pdflatex"
 
@@ -55,8 +55,14 @@ case $key in
     if [[ "$TEMP" =~ "." ]]; then
         TEMP=${TEMP%.}
     fi
-    if [ ! -f "$TEMP.tex" ]; then
-        echo "No such file exists"
+    if [[ ${TEMP:0:1} == "-" ]]; then
+        echo "ERROR: \"$TEMP\" is not a valid argument..."
+        echo ""
+        echo "Here is the help for you:"
+        echo ""
+        HELP=true
+    elif [ ! -f "$TEMP.tex" ]; then
+        echo "The file \"$TEMP\" does not exist..."
         exit 1  
     fi
 
