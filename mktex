@@ -250,13 +250,13 @@ else
     echo ""
     echo "Compiled with warnings in $compiler..."
     echo ""
-    echo "Warnings:"
+    echo "Warnings:________________________"
     echo "$result"
     latexERR=$(cat /tmp/latexerr)
 
     if [ ! -z "$latexERR" ]; then
         echo ""
-        echo "ERRORS:"
+        echo "ERRORS:________________________"
         cat /tmp/latexerr
         echo ""
     fi
