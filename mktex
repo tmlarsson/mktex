@@ -201,7 +201,7 @@ fi
 # sweep will be neglected since this usually contain errors
 # not present in the second sweep.
 echo -n "$compiler: First sweep..."
-$compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null
+$compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null 2>&1
 echo "[OK]"
 
 # If one uses biber for references one also has to compile 
@@ -233,17 +233,20 @@ fi
 # Second sweep with the given compiler
 echo -n "$compiler: Second sweep..."
 
-result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 
+result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 2>/tmp/latexerr
 echo "[OK]"
 
 # Prints the result, if there is any errors to display.
 if [ -z "$result" ]; then
     echo 'Compiled without errors!'
 else
-    echo "Compiled with errors in $compiler..."
+    echo "Compiled with warnings in $compiler..."
     echo""
     echo "$result"
+    echo ""
+    echo /tmp/latexerr
 fi
+
 
 if [ $BIBER == true ]; then
 if [ -z "$bibRES" ]; then
