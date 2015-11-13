@@ -171,7 +171,7 @@ fi
 if [ "$TIKZ" == true ]; then
     echo -n "Compiling TikZ picure using $compiler..."
 
-    tikzresult=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$")
+    tikzresult=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/tikzERR | grep -i "^.*:[0-9]*:.*\|warning.*$")
 
     if [ -z "$tikzresult" ]; then
         echo "[OK]"
@@ -181,6 +181,12 @@ if [ "$TIKZ" == true ]; then
         echo "Found some errors..."
         echo ""
         echo $tikzresult
+        tikzERR=$(cat /tmp/tikzERR)
+        if [ ! -z "$tikzERR" ]; then
+            echo ""
+            echo $tikzERR
+            echo ""
+        fi
     fi    
 fi
 
@@ -201,7 +207,7 @@ fi
 # sweep will be neglected since this usually contain errors
 # not present in the second sweep.
 echo -n "$compiler: First sweep..."
-$compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null 2>&1
+max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null 2>&1
 echo "[OK]"
 
 # If one uses biber for references one also has to compile 
@@ -233,18 +239,26 @@ fi
 # Second sweep with the given compiler
 echo -n "$compiler: Second sweep..."
 
-result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" | grep -i "^.*:[0-9]*:.*\|warning.*$") 2>/tmp/latexerr
+result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/latexerr | grep -i "^.*:[0-9]*:.*\|warning.*$") 
 echo "[OK]"
 
 # Prints the result, if there is any errors to display.
 if [ -z "$result" ]; then
+    echo ""
     echo 'Compiled without errors!'
 else
+    echo ""
     echo "Compiled with warnings in $compiler..."
     echo""
     echo "$result"
-    echo ""
-    echo /tmp/latexerr
+    latexERR=$(cat /tmp/latexerr)
+    #echo $latexERR
+
+    if [ ! -z "$latexERR" ]; then
+        echo ""
+        cat /tmp/latexerr
+        echo ""
+    fi
 fi
 
 
