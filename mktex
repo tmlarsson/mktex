@@ -256,7 +256,7 @@ else
 
     if [ ! -z "$latexERR" ]; then
         echo ""
-        echo "ERRORS:________________________"
+        echo "ERRORS:__________________________"
         cat /tmp/latexerr
         echo ""
     fi
