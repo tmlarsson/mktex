@@ -250,13 +250,13 @@ else
     echo ""
     echo "Compiled with warnings in $compiler..."
     echo ""
-    echo -n "Warnings:"
+    echo "Warnings:"
     echo "$result"
     latexERR=$(cat /tmp/latexerr)
 
     if [ ! -z "$latexERR" ]; then
         echo ""
-        echo -n "ERRORS:"
+        echo "ERRORS:"
         cat /tmp/latexerr
         echo ""
     fi
@@ -271,10 +271,10 @@ else
     echo ""
     echo "Compiled with errors in biber..."
     echo ""
-    echo -n "Warnings:"
+    echo "Warnings:"
     echo "$bibRES"
     echo ""
-    echo -n "ERRORS:"
+    echo "ERRORS:"
     echo "$bibERR"
 fi
 fi
