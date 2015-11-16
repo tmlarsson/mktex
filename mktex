@@ -142,7 +142,10 @@ if [ ! -z $gettex ]; then
     then
         echo "[OK]"
         cd latex-template
-        mv *.tex "$dir"
+        if ! mv *.tex "$dir" ;
+        then
+            echo "No such directory $dir..."
+        fi
         cd ..
         rm -rf latex-template
     else
