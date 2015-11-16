@@ -142,7 +142,7 @@ if [ ! -z $gettex ]; then
     then
         echo "[OK]"
         cd latex-template
-        mv *.tex $dir
+        mv *.tex "$dir"
         cd ..
         rm -rf latex-template
     else
