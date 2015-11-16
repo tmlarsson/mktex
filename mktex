@@ -38,9 +38,6 @@ case $key in
     --tikz)
     TIKZ=true
     ;;
-    -std=lua)
-    compiler="lualatex"
-    ;;
     --update)
     update=true
     ;;
@@ -85,13 +82,12 @@ if [ "$HELP" == true ]; then
     echo "-c, --clean           remove unnecessary files"
     echo "-m, --minted          Use this flag to use minted"
     echo "--tikz                Compile only TikZ picures in standalone mode"
-    echo "-std=lua              Changes the default compiler to lualatex"
     echo "--update              Updates mktex into the newest found on github"
     echo "--gettex              Fetches the latest latex-template from kwlg"
     exit 0
 fi
 
-# Updates mktex. This creates a script in the tmp folder
+# Updatesa mktex. This creates a script in the tmp folder
 # that will fetch the newest file from github.
 # This does however require the user to use the sudo 
 # command to move the new file to the /usr/local/bin folder.
@@ -155,10 +151,18 @@ if [ ! -z $gettex ]; then
     exit 0
 fi
 
-
 # Check for existance of the compiler. If it does not exist,
 # the script will exit.
-type $compiler >/dev/null 2>&1 || { echo >&2 "I require $compiler but it's not installed. Aborting."; exit 1; }
+if type lualatex >/dev/null 2>&1;
+then
+    compiler="lualatex"
+elif type pdflatex >/dev/null 2>&1;
+then
+    compiler="pdflatex"
+else
+    echo "No supported compiler is installed..."
+    exit 0
+fi
 
 # Check if no filename is specified.
 # If no filename is given then exit the program
