@@ -5,10 +5,9 @@ clear
 ###################################################################################
 
 # Initial setup
-BIBER=False
-CLEAN=False
+BIBER=false
+CLEAN=false
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
-compiler="pdflatex"
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -34,6 +33,9 @@ case $key in
     ;;
     -o|--open)
     OPEN=true
+    ;;
+    --pdflatex)
+    compiler="pdflatex"
     ;;
     --tikz)
     TIKZ=true
@@ -81,13 +83,14 @@ if [ "$HELP" == true ]; then
     echo "-b, --biber           compile using biber"
     echo "-c, --clean           remove unnecessary files"
     echo "-m, --minted          Use this flag to use minted"
+    echo "--pdflatex            Overrides the default compiler with pdflatex"
     echo "--tikz                Compile only TikZ picures in standalone mode"
     echo "--update              Updates mktex into the newest found on github"
     echo "--gettex              Fetches the latest latex-template from kwlg"
     exit 0
 fi
 
-# Updatesa mktex. This creates a script in the tmp folder
+# Updates mktex. This creates a script in the tmp folder
 # that will fetch the newest file from github.
 # This does however require the user to use the sudo 
 # command to move the new file to the /usr/local/bin folder.
@@ -153,15 +156,17 @@ fi
 
 # Check for existance of the compiler. If it does not exist,
 # the script will exit.
-if type lualatex >/dev/null 2>&1;
-then
-    compiler="lualatex"
-elif type pdflatex >/dev/null 2>&1;
-then
-    compiler="pdflatex"
-else
-    echo "No supported compiler is installed..."
-    exit 0
+if [ -z $compiler ]; then
+    if type lualatex >/dev/null 2>&1;
+    then
+        compiler="lualatex"
+    elif type pdflatex >/dev/null 2>&1;
+    then
+        compiler="pdflatex"
+    else
+        echo "No supported compiler is installed..."
+        exit 0
+    fi
 fi
 
 # Check if no filename is specified.
