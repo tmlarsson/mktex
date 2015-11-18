@@ -27,6 +27,6 @@ The TikZ flag, --tikz, can be used if one only want to compile a part of your do
 
 The --pdflatex flag overrides the defualt setting of pdflatex if by some reson one would want to user pdflatex over lualatex.
 
-The --update flag updates the script to the newest version found here on github. Needs sudo to be able to place the new script in /usr/local/bin/. Please look through the code before use, such that you feel condifdent with it.
+The --update flag updates the script to the newest version found here on github. Needs sudo to be able to place the new script in /usr/local/bin/. Please look through the code before use, such that you feel confident with it.
 
 The --gettex flag fetches the newest latex-template from @kwlg. This removes the need to manually copy over a template from a folder on your pc. The latex-template fetched is the one found at @kwlg's github over at https://github.com/kwlg/latex-template/.
