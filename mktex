@@ -73,7 +73,7 @@ done
 
 
 if [ "$HELP" == true ]; then
-    echo "mktex - Compiles LaTeX documents with pdfLaTeX"
+    echo "mktex - Compiles LaTeX documents with luaLaTeX"
     echo " "
     echo "Usage example: [possible flags]"
     echo "mktex filename [-b -c -m]"
@@ -101,8 +101,22 @@ fi
 if [ ! -z $update ]; then
     # Checks if update is run as root. 
     # Otherwise it terminates the script
+    echo -n "Install local or globally? [l/g]: "
+    read installPath
+
+    if [ $installPath == "l" ]; then
+        dir=$PWD
+        cd /tmp
+        if git clone https://github.com/tmlarsson/mktex &>/dev/null
+        then
+            cd mktex; mv mktex "$dir"; cd ..
+            rm -rf mktex; cd "$dir"
+            chmod +x mktex
+            exit 0
+        fi
+    fi
     if [[ $EUID -ne 0 ]]; then
-        echo "Update must be run as root" 1>&2
+        echo "Update must be run as root to install globally" 1>&2
         exit 1
     fi
     cd /tmp
@@ -141,6 +155,16 @@ if [ ! -z $gettex ]; then
     then
         echo "[OK]"
         cd latex-template
+        echo "Presentation or Report? [p/r]"
+        read doc
+        if [ $doc == "p" ]; then
+            cd Presentation
+        elif [ $doc == "r" ]; then
+            cd Report
+        else
+            echo "Not a valid input..."
+        fi
+
         if ! mv *.tex "$dir" ;
         then
             echo "No such directory $dir..."
@@ -294,41 +318,47 @@ fi
 # Remove unnessesary files.
 if [ "$CLEAN" == true ]; then
     if [ -f "${FILENAME}.log" ]; then
-        rm *.log
+        rm ${FILENAME}.log
     fi
     if [ -f "${FILENAME}.lof" ]; then
-        rm *.lof
+        rm ${FILENAME}.lof
     fi
     if [ -f "${FILENAME}.blg" ]; then
-        rm *.blg
+        rm ${FILENAME}.blg
     fi
     if [ -f "${FILENAME}.toc" ]; then
-        rm *.toc
+        rm ${FILENAME}.toc
     fi
     if [ -f "${FILENAME}.out" ]; then
-        rm *.out
+        rm ${FILENAME}.out
     fi
 
     if [ -f "${FILENAME}.bbl" ]; then
-        rm *.bbl
+        rm ${FILENAME}.bbl
     fi
     if [ -f "${FILENAME}.aux" ]; then
-        rm *.aux
+        rm ${FILENAME}.aux
     fi
     if [ -f "${FILENAME}.bcf" ]; then
-        rm *.bcf
+        rm ${FILENAME}.bcf
     fi
     if [ -f "${FILENAME}.run.xml" ]; then
-        rm *.run.xml
+        rm ${FILENAME}.run.xml
     fi
     if [ -f "${FILENAME}.tex.bak" ]; then
-        rm *.tex.bak
+        rm ${FILENAME}.tex.bak
     fi
     if [ -f "${FILENAME}.fls" ]; then
-        rm *.fls
+        rm ${FILENAME}.fls
     fi
     if [ -f "${FILENAME}.fdb_latexmk" ]; then
-        rm *.fdb_latexmk
+        rm ${FILENAME}.fdb_latexmk
+    fi
+    if [ -f "${FILENAME}.snm" ]; then
+        rm ${FILENAME}.snm
+    fi
+    if [ -f "${FILENAME}.nav" ]; then
+        rm ${FILENAME}.nav
     fi
 fi
 
