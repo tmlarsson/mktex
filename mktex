@@ -109,12 +109,16 @@ if [ ! -z $update ]; then
         cd /tmp
         if git clone https://github.com/tmlarsson/mktex &>/dev/null
         then
+            
             cd mktex; mv mktex "$dir"; cd ..
             rm -rf mktex; cd "$dir"
             chmod +x mktex
             exit 0
+
         fi
-    fi
+    
+    elif [ $installPath == "g" ]; then
+
     if [[ $EUID -ne 0 ]]; then
         echo "Update must be run as root to install globally" 1>&2
         exit 1
@@ -137,6 +141,11 @@ if [ ! -z $update ]; then
     ./tmpupdate.sh
     rm tmpupdate.sh
     exit 0
+
+    else
+        echo "Not a valid inpu..."
+        exit 0
+    fi
 fi
 
 
@@ -148,14 +157,14 @@ if [ ! -z $gettex ]; then
     cd /tmp
 
     if [ -d "latex-template" ]; then
-        mv latex-template latex-template-moved
+        rm -rf latex-template
     fi
     
     if git clone https://github.com/kwlg/latex-template &>/dev/null
     then
         echo "[OK]"
         cd latex-template
-        echo "Presentation or Report? [p/r]"
+        echo -n "Presentation or Report? [p/r]"
         read doc
         if [ $doc == "p" ]; then
             cd Presentation
@@ -163,6 +172,7 @@ if [ ! -z $gettex ]; then
             cd Report
         else
             echo "Not a valid input..."
+            exit 0
         fi
 
         if ! mv *.tex "$dir" ;
@@ -307,10 +317,10 @@ else
     echo ""
     echo "Compiled with errors in biber..."
     echo ""
-    echo "Warnings:"
+    echo "Warnings:________________________"
     echo "$bibRES"
     echo ""
-    echo "ERRORS:"
+    echo "ERRORS:________________________"
     echo "$bibERR"
 fi
 fi
