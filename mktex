@@ -61,7 +61,7 @@ case $key in
         echo ""
         HELP=true
     elif [ ! -f "$TEMP.tex" ]; then
-        echo "The file \"$TEMP\" does not exist..."
+        echo "The file \"$TEMP\" does not exist."
         exit 1  
     fi
 
@@ -143,7 +143,7 @@ if [ ! -z $update ]; then
     exit 0
 
     else
-        echo "Not a valid inpu..."
+        echo "ERROR: \""$installPath"\" is not a valid input."
         exit 0
     fi
 fi
@@ -164,26 +164,27 @@ if [ ! -z $gettex ]; then
     then
         echo "[OK]"
         cd latex-template
-        echo -n "Presentation or Report? [p/r]"
+        echo -n "Presentation or Report? [p/r]: "
         read doc
         if [ $doc == "p" ]; then
             cd Presentation
         elif [ $doc == "r" ]; then
             cd Report
         else
-            echo "Not a valid input..."
+            echo "ERROR: \""$doc"\" is not a valid input."
             exit 0
         fi
 
         if ! mv *.tex "$dir" ;
         then
-            echo "No such directory $dir..."
+            echo "ERROR: The directory "$dir" does not exist."
+            exit 0
         fi
         cd ..
         rm -rf latex-template
     else
         echo ""
-        echo "Failed to get template..."
+        echo "ERROR: Failed to get template."
     fi
     exit 0
 fi
@@ -198,7 +199,7 @@ if [ -z $compiler ]; then
     then
         compiler="pdflatex"
     else
-        echo "No supported compiler is installed..."
+        echo "ERROR: No supported compiler is installed."
         exit 0
     fi
 fi
@@ -206,7 +207,7 @@ fi
 # Check if no filename is specified.
 # If no filename is given then exit the program
 if [ -z $FILENAME ]; then
-    echo "No filename was specified..."
+    echo "ERROR: No filename was specified."
     exit 0
 fi
 
@@ -223,13 +224,15 @@ if [ "$TIKZ" == true ]; then
         echo "[OK]"
     else
         echo ""
+        echo "Compiled with warnings in $compiler..."
         echo ""
-        echo "Found some errors..."
+        echo "Warnings:________________________"
         echo ""
         echo $tikzresult
         tikzERR=$(cat /tmp/tikzERR)
         if [ ! -z "$tikzERR" ]; then
             echo ""
+            echo "ERRORS:__________________________"
             echo $tikzERR
             echo ""
         fi
