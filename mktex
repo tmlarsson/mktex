@@ -391,7 +391,7 @@ fi
 
 open=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|fatal error .*$") 
 
-if [ -z $open ]; then
+if [ ! -z "$open" ]; then
     exit 0
 fi
 # Opens the file if the -o flag was specified
