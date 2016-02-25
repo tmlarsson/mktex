@@ -296,7 +296,12 @@ fi
 # Second sweep with the given compiler
 echo -n "$compiler: Second sweep..."
 
-result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/latexerr | grep -i "^.*:[0-9]*:.*\|warning.*$") 
+#result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/latexerr | grep -i "^.*:[0-9]*:.*\|warning.*$") 
+
+max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 1>/tmp/latex-output 2>/tmp/latexerr 
+
+result=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|warning\| error .*$") 
+
 echo "[OK]"
 
 # Prints the result, if there is any errors to display.
@@ -382,6 +387,9 @@ if [ "$CLEAN" == true ]; then
         rm ${FILENAME}.nav
     fi
 fi
+
+
+open=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|warning\| error .*$") 
 
 # Opens the file if the -o flag was specified
 if [ "$OPEN" == true ]; then
