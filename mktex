@@ -386,6 +386,9 @@ if [ "$CLEAN" == true ]; then
     if [ -f "${FILENAME}.nav" ]; then
         rm ${FILENAME}.nav
     fi
+    if [ -f "${FILENAME}.lot" ]; then
+        rm ${FILENAME}.lot
+    fi
 fi
 
 
