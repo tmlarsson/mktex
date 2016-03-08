@@ -94,7 +94,7 @@ if [ "$HELP" == true ]; then
     echo "--pdflatex            Overrides the default compiler with pdflatex"
     echo "--tikz                Compile only TikZ picures in standalone mode"
     echo "--update              Updates mktex into the newest found on github"
-    echo "--gettex              Fetches the latest latex-template from kwlg"
+    echo "--gettex              Fetches the latest latex-template from tmlarsson"
     exit 0
 fi
 
@@ -157,7 +157,7 @@ if [ ! -z $update ]; then
 fi
 
 
-# Fetches the latex template from kwlg on github.
+# Fetches the latex template from tmlarsson on github.
 if [ ! -z $gettex ]; then
     dir=$PWD
     echo -n "Fetching the template..."
@@ -168,7 +168,7 @@ if [ ! -z $gettex ]; then
         rm -rf latex-template
     fi
     
-    if git clone https://github.com/kwlg/latex-template &>/dev/null
+    if git clone https://github.com/tmlarsson/latex-template &>/dev/null
     then
         echo "[OK]"
         cd latex-template
