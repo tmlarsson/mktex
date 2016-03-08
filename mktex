@@ -143,25 +143,6 @@ if [ ! -z $update ]; then
         echo && echo Failed to get update...
         rm -rf mktex
     fi
-#    chmod +x tmpupdate.sh
-#    ./tmpupdate.sh
-#    rm tmpupdate.sh
-#    touch tmpupdate.sh
-#    echo "#!/bin/bash" > tmpupdate.sh
-#    echo "echo -n Fetching update from github..." >> tmpupdate.sh
-#    echo "if git clone https://github.com/tmlarsson/mktex &>/dev/null" >> tmpupdate.sh
-#    echo "then" >> tmpupdate.sh
-#    echo "echo [OK]" >> tmpupdate.sh
-#    echo "cd mktex && sudo mv mktex /usr/local/bin" >> tmpupdate.sh
-#    echo "cd ../ && rm -rf mktex" >> tmpupdate.sh
-#    echo "sudo chmod +x /usr/local/bin/mktex" >> tmpupdate.sh
-#    echo "else" >> tmpupdate.sh
-#    echo "echo && echo Failed to get update..." >> tmpupdate.sh
-#    echo "rm -rf mktex" >> tmpupdate.sh
-#    echo "fi" >> tmpupdate.sh
-#    chmod +x tmpupdate.sh
-#    ./tmpupdate.sh
-#    rm tmpupdate.sh
     exit 0
 
     else
