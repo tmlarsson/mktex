@@ -8,6 +8,7 @@ clear
 BIBER=false
 CLEAN=false
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
+VERBOSE='| grep -i "^.*:[0-9]*:.*\|warning.*$"'
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -46,8 +47,11 @@ case $key in
     --gettex)
     gettex=true
     ;;
-    -v|--version)
+    --version)
     VERSION=true
+    ;;
+    -v)
+    VERBOSE=true
     ;;
     *)
     TEMP="$1"
@@ -75,7 +79,7 @@ shift # go to next argument or value
 done
 
 if [ "$VERSION" == true ]; then
-    echo "mktex v1.0 : 2016-01-02"
+    echo "mktex v1.1 : 2016-03-16"
     exit 0
 fi
 
@@ -91,10 +95,12 @@ if [ "$HELP" == true ]; then
     echo "-b, --biber           compile using biber"
     echo "-c, --clean           remove unnecessary files"
     echo "-m, --minted          Use this flag to use minted"
+    echo "-v,                   Verbose mode"
     echo "--pdflatex            Overrides the default compiler with pdflatex"
     echo "--tikz                Compile only TikZ picures in standalone mode"
     echo "--update              Updates mktex into the newest found on github"
     echo "--gettex              Fetches the latest latex-template from tmlarsson"
+    echo "--version             Shows the version number"
     exit 0
 fi
 
@@ -221,7 +227,7 @@ fi
 if [ "$TIKZ" == true ]; then
     echo -n "Compiling TikZ picure using $compiler..."
 
-    tikzresult=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/tikzERR | grep -i "^.*:[0-9]*:.*\|warning.*$")
+    tikzresult=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/tikzERR $VERBOSE)
 
     if [ -z "$tikzresult" ]; then
         echo "[OK]"
@@ -291,11 +297,9 @@ fi
 # Second sweep with the given compiler
 echo -n "$compiler: Second sweep..."
 
-#result=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/latexerr | grep -i "^.*:[0-9]*:.*\|warning.*$") 
-
 max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 1>/tmp/latex-output 2>/tmp/latexerr 
 
-result=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|warning\| error .*$") 
+result=$(cat /tmp/latex-output $VERBOSE) 
 
 echo "[OK]"
 
@@ -319,6 +323,9 @@ else
     fi
 fi
 
+# Checks for warnings in biber
+
+bibRES=$(echo $bibRES $VERBOSE)
 
 if [ $BIBER == true ]; then
 if [ -z "$bibRES" ]; then
