@@ -8,7 +8,7 @@ clear
 BIBER=false
 CLEAN=false
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
-VERBOSE='| grep -i "^.*:[0-9]*:.*\|warning.*$"'
+VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -51,7 +51,7 @@ case $key in
     VERSION=true
     ;;
     -v)
-    VERBOSE=true
+    VERBOSE=" "
     ;;
     *)
     TEMP="$1"
@@ -237,12 +237,15 @@ if [ "$TIKZ" == true ]; then
         echo ""
         echo "Warnings:________________________"
         echo ""
-        echo $tikzresult
+        echo "$tikzresult"
         tikzERR=$(cat /tmp/tikzERR)
+        echo "skjdbakjdkksjdhjasldh"
+        echo "$tikzERR"
+        echo "asgdashjdgajhsdg"
         if [ ! -z "$tikzERR" ]; then
             echo ""
             echo "ERRORS:__________________________"
-            echo $tikzERR
+            echo "$tikzERR"
             echo ""
         fi
     fi    
@@ -276,8 +279,9 @@ if [ "$BIBER" == true ]; then
     runAgain=true
     while [ "$runAgain" == true ]; do
         echo -n "biber..."
-        bibRES=$(biber "$FILENAME" 2>/tmp/biber)
-        bibERR=$(</tmp/biber)
+        biber "$FILENAME" 1>/tmp/bibres 2>/tmp/biberr
+        bibRES=$(cat /tmp/bibres | grep -i "^.*:[0-9]*:.*\|warn\| error .*$")
+        bibERR=$(</tmp/biberr)
         echo "[OK]"
 
         # Check fo data bug in biber
@@ -299,50 +303,49 @@ echo -n "$compiler: Second sweep..."
 
 max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 1>/tmp/latex-output 2>/tmp/latexerr 
 
-result=$(cat /tmp/latex-output $VERBOSE) 
+result=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|warning\| error .*$")
+
+temp=$(echo "$result" |grep -i "The following entry could not be found")
+
+if [ ! -z "$temp" ]; then
+    bibres=$(cat /tmp/latex-output |grep -i "(biblatex) ")
+    result+="\n$bibres"
+fi
+
 
 echo "[OK]"
 
 # Prints the result, if there is any errors to display.
-if [ -z "$result" ]; then
+if [ -z "$result" -a -z "$bibRES" ]; then
     echo ""
     echo 'Compiled without errors!'
-else
+elif [ ! -z "$result" ]; then
     echo ""
     echo "Compiled with warnings in $compiler..."
     echo ""
     echo "Warnings:________________________"
-    echo "$result"
+    echo -e "$result"           # echo -e to print new line when \n is written
     latexERR=$(cat /tmp/latexerr)
-
     if [ ! -z "$latexERR" ]; then
         echo ""
         echo "ERRORS:__________________________"
-        cat /tmp/latexerr
+        echo "$latexERR"
         echo ""
     fi
-fi
-
-# Checks for warnings in biber
-
-bibRES=$(echo $bibRES $VERBOSE)
-
-if [ $BIBER == true ]; then
-if [ -z "$bibRES" ]; then
-    echo ""
-    echo 'Compiled without errors in biber!'
-else
+elif [ ! -z "$bibRES" ]; then
     echo ""
     echo "Compiled with errors in biber..."
     echo ""
     echo "Warnings:________________________"
     echo "$bibRES"
-    echo ""
-    echo "ERRORS:________________________"
-    echo "$bibERR"
+    if [ ! -z "$bibERR" ]; then
+        echo ""
+        echo "ERRORS:________________________"
+        echo "$bibERR"
+    fi
 fi
 fi
-fi
+
 # Remove unnessesary files.
 if [ "$CLEAN" == true ]; then
     if [ -f "${FILENAME}.log" ]; then
@@ -394,9 +397,9 @@ if [ "$CLEAN" == true ]; then
 fi
 
 
-open=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|fatal error .*$") 
+dontopen=$(cat /tmp/latex-output | grep -i "^.*:[0-9]*:.*\|fatal error .*$") 
 
-if [ ! -z "$open" ]; then
+if [ ! -z "$dontopen" ]; then
     exit 0
 fi
 # Opens the file if the -o flag was specified
