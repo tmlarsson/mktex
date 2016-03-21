@@ -144,7 +144,7 @@ if [ ! -z $update ]; then
         echo "[OK]"
     fi
     id=$(cat /tmp/mktex.html |grep -oE -m 1 "mktex\/commit\/.{0,40}"|cut -c 14-)
-    idNow=$(head -n 3 /usr/local/bin/mktex | tail -n -1)+
+    idNow=$(head -n 3 /usr/local/bin/mktex | tail -n -1)
     if [ "$id" == "$idNow" ]; then
         echo "No update available..."
         exit 0
