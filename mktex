@@ -7,6 +7,7 @@ clear
 # Initial setup
 BIBER=false
 CLEAN=false
+UPDATE=
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 
@@ -14,6 +15,23 @@ VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 if [ "$#" == 0 ]; then
     echo "No input..."
     exit 1
+fi
+
+# Check if there is a need to check for update
+if [ ! -f "/tmp/mktex-update" ]; then
+    date +%s > /tmp/mktex-update
+else
+    timeUpdated=$(cat /tmp/mktex-update)
+    timeNow=$(date +%s)
+    diff=$((timeNow-timeUpdated))
+    if [ $diff -gt 25200 ]; then
+        echo -n "Do you want to update? [y/n]: "
+        read UPDATE
+        echo $(date +%s) > /tmp/mktex-update
+        if [ "$UPDATE" == "y" -o "$UPDATE" == "Y" ]; then
+            update=true
+        fi
+    fi
 fi
 
 while [[ $# > 0 ]]
@@ -55,21 +73,23 @@ case $key in
     ;;
     *)
     TEMP="$1"
-    if [[ $TEMP =~ ".tex" ]]; then
-        TEMP=${TEMP%.tex}
-    fi
-    if [[ "$TEMP" =~ "." ]]; then
-        TEMP=${TEMP%.}
-    fi
-    if [[ ${TEMP:0:1} == "-" ]]; then
-        echo "ERROR: \"$TEMP\" is not a valid argument..."
-        echo ""
-        echo "Here is the help for you:"
-        echo ""
-        HELP=true
-    elif [ ! -f "$TEMP.tex" ]; then
-        echo "The file \"$TEMP\" does not exist."
-        exit 1  
+    if [ ! -z "$UPDATE"  ]; then
+        if [[ $TEMP =~ ".tex" ]]; then
+            TEMP=${TEMP%.tex}
+        fi
+        if [[ "$TEMP" =~ "." ]]; then
+            TEMP=${TEMP%.}
+        fi
+        if [[ ${TEMP:0:1} == "-" ]]; then
+            echo "ERROR: \"$TEMP\" is not a valid argument..."
+            echo ""
+            echo "Here is the help for you:"
+            echo ""
+            HELP=true
+        elif [ ! -f "$TEMP.tex" ]; then
+            echo "The file \"$TEMP\" does not exist."
+            exit 1  
+        fi
     fi
 
     FILENAME="$TEMP"
@@ -79,7 +99,7 @@ shift # go to next argument or value
 done
 
 if [ "$VERSION" == true ]; then
-    echo "mktex v1.1 : 2016-03-16"
+    echo "mktex v1.2 : 2016-03-21"
     exit 0
 fi
 
@@ -123,34 +143,31 @@ if [ ! -z $update ]; then
         cd /tmp
         if git clone https://github.com/tmlarsson/mktex &>/dev/null
         then
-            
             cd mktex; mv mktex "$dir"; cd ..
             rm -rf mktex; cd "$dir"
             chmod +x mktex
             exit 0
-
         fi
-    
     elif [ $installPath == "g" ]; then
-
-    if [[ $EUID -ne 0 ]]; then
-        echo "Update must be run as root to install globally" 1>&2
-        exit 1
-    fi
-    cd /tmp
-    echo -n Fetching update from github...
-    if git clone https://github.com/tmlarsson/mktex &>/dev/null
-    then
-        echo [OK]
-        cd mktex && sudo mv mktex /usr/local/bin
+        if [[ $EUID -ne 0 ]]; then
+            echo "Update must be run as root to install globally" 1>&2
+            exit 1
+        fi
+        cd /tmp
+        echo -n Fetching update from github...
+        if git clone https://github.com/tmlarsson/mktex &>/dev/null; then
+            echo [OK]
+            cd mktex
+            if sudo mv mktex /usr/local/bin; then
+                echo "Succeded in installing the update!"
+                sudo chmod +x /usr/local/bin/mktex
+                echo $(date +%s) > /tmp/mktex-update
+            else
+            echo "Failed to install update..."
+        fi
         cd ../ && rm -rf mktex
-        sudo chmod +x /usr/local/bin/mktex
-        else
-        echo && echo Failed to get update...
-        rm -rf mktex
+        exit 0
     fi
-    exit 0
-
     else
         echo "ERROR: \""$installPath"\" is not a valid input."
         exit 0
