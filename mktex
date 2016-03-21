@@ -107,7 +107,7 @@ if [ "$VERSION" == true ]; then
 fi
 
 if [ "$HELP" == true ]; then
-    echo "mktex v1.0 : 2016-01-02"
+    echo "mktex v1.2 : 2016-03-21"
     echo "Compiles LaTeX documents with luaLaTeX"
     echo " "
     echo "Usage example: [possible flags]"
@@ -180,8 +180,8 @@ if [ ! -z $update ]; then
             cd mktex
             if sudo mv mktex /usr/local/bin; then
                 echo $(date +%s) > /tmp/mktex-update
-                sed -e "s/"$id"/"$idNow"/" /usr/local/bin/mktex > /tmp/mktex-script
-                sudo mv /tmp/mktex-script /usr/local/bin/mktex
+                sed -e "s/"$idNow"/"$id"/" /usr/local/bin/mktex > /tmp/mktex-script
+                sudo cp /tmp/mktex-script /usr/local/bin/mktex
                 sudo chmod +x /usr/local/bin/mktex
                 echo "Succeded in installing the update!"
             fi
