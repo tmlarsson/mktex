@@ -162,7 +162,7 @@ if [ ! -z $update ]; then
         if git clone https://github.com/tmlarsson/mktex &>/dev/null
         then
             cd mktex; 
-            sed -e "s/"$id"/"$idNow"/" ./mktex > ./mktex-tmp
+            sed -e "s/"$idNow"/"$id"/" ./mktex > ./mktex-tmp
             mv mktex-tmp "$dir"; cd ..
             rm -rf mktex; cd "$dir"
             chmod +x mktex
