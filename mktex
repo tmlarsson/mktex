@@ -1,6 +1,6 @@
 #!/bin/bash
 ######### commit id ############
-# 2a8a4c6d7882a0d652dbe227921528874af02a2d
+# 73a573554f8e483f571090dd9c3bc3868e2c9768
 ################################
 clear
 ###################################################################################
@@ -145,8 +145,6 @@ if [ ! -z $update ]; then
     fi
     id=$(cat /tmp/mktex.html |grep -oE -m 1 "mktex\/commit\/.{0,40}"|cut -c 14-)
     idNow=$(head -n 3 /usr/local/bin/mktex | tail -n -1 | cut -c 3-)
-    echo $id
-    echo $idNow
     if [ "$id" == "$idNow" ]; then
         echo "No update available..."
         exit 0
@@ -164,7 +162,7 @@ if [ ! -z $update ]; then
         if git clone https://github.com/tmlarsson/mktex &>/dev/null
         then
             cd mktex; 
-            sed -e "s/"$id"/"$idNow"/" ./mktex > ./mktex-tmp
+            sed -e "s/"$idNow"/"$id"/" ./mktex > ./mktex-tmp
             mv mktex-tmp "$dir"; cd ..
             rm -rf mktex; cd "$dir"
             chmod +x mktex
