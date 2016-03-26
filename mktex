@@ -1,7 +1,4 @@
 #!/bin/bash
-######### commit id ############
-# 73a573554f8e483f571090dd9c3bc3868e2c9768
-################################
 clear
 ###################################################################################
 # Source: https://github.com/tmlarsson/mktex
@@ -20,17 +17,22 @@ if [ "$#" == 0 ]; then
     exit 1
 fi
 
+# Initial setup
+if [ ! -d ~/.mktex ]; then
+    mkdir ~/.mktex
+fi
+
 # Check if there is a need to check for update
-if [ ! -f "/tmp/mktex-update" ]; then
-    date +%s > /tmp/mktex-update
+if [ ! -f ~/.mktex/mktex-update ]; then
+    date +%s > ~/.mktex/mktex-update
 else
-    timeUpdated=$(cat /tmp/mktex-update)
+    timeUpdated=$(cat ~/.mktex/mktex-update)
     timeNow=$(date +%s)
     diff=$((timeNow-timeUpdated))
     if [ $diff -gt 25200 ]; then
         echo -n "Do you want to update? [y/n]: "
         read UPDATE
-        echo $(date +%s) > /tmp/mktex-update
+        echo $(date +%s) > ~/.mktex/mktex-update
         if [ "$UPDATE" == "y" -o "$UPDATE" == "Y" ]; then
             update=true
         fi
@@ -102,12 +104,12 @@ shift # go to next argument or value
 done
 
 if [ "$VERSION" == true ]; then
-    echo "mktex v1.2 : 2016-03-21"
+    echo "mktex v1.2 : 2016-03-26"
     exit 0
 fi
 
 if [ "$HELP" == true ]; then
-    echo "mktex v1.2 : 2016-03-21"
+    echo "mktex v1.2 : 2016-03-26"
     echo "Compiles LaTeX documents with luaLaTeX"
     echo " "
     echo "Usage example: [possible flags]"
@@ -137,63 +139,51 @@ fi
 # which requires the sudo command without trusting it. NEVER!
 if [ ! -z $update ]; then
     echo -n "Checking for updates..."
-    if ! wget -O /tmp/mktex.html https://github.com/tmlarsson/mktex 2>/dev/null; then
+    if ! wget -O ~/.mktex/mktex.html https://github.com/tmlarsson/mktex 2>/dev/null; then
         echo "[Failed]"
     exit 0
     else
         echo "[OK]"
     fi
-    id=$(cat /tmp/mktex.html |grep -oE -m 1 "mktex\/commit\/.{0,40}"|cut -c 14-)
-    idNow=$(head -n 3 /usr/local/bin/mktex | tail -n -1 | cut -c 3-)
+    id=$(cat ~/.mktex/mktex.html |grep -oE -m 1 "mktex\/commit\/.{0,40}"|cut -c 14-)
+
+    if [ -f ~/.mktex/mktex-id ]; then
+        idNow=$(cat ~/.mktex/mktex-id)
+    else
+        echo $id > ~/.mktex/mktex-id
+        idNow=false
+    fi
+
     if [ "$id" == "$idNow" ]; then
         echo "No update available..."
         exit 0
     else
         echo "Update available!"
     fi
-    
-    # Checks if update is run as root. 
-    # Otherwise it terminates the script
-    echo -n "Install local or globally? [l/g]: "
-    read installPath
-    if [ $installPath == "l" ]; then
-        dir=$PWD
-        cd /tmp
-        if git clone https://github.com/tmlarsson/mktex &>/dev/null
-        then
-            cd mktex; 
-            sed -e "s/"$idNow"/"$id"/" ./mktex > ./mktex-tmp
-            mv mktex-tmp "$dir"; cd ..
-            rm -rf mktex; cd "$dir"
-            chmod +x mktex
-            exit 0
-        fi
-    elif [ $installPath == "g" ]; then
+
+    # Install update
+    cd /tmp
+    echo Fetching update from github...
+    if [ -d "/tmp/mktex" ]; then
+        rm -r mktex
+    fi
+    if git clone https://github.com/tmlarsson/mktex ; then
+        cd mktex
+        mv mktex ~/.mktex/
+        echo $(date +%s) > ~/.mktex/mktex-update
+        chmod +x ~/.mktex/mktex
         if [[ $EUID -ne 0 ]]; then
-            echo "Update must be run as root to install globally" 1>&2
+            echo ""
+            echo "Root needed to istall symlink to /usr/local/bin/"
+            echo "Please run \"sudo ln -s ~/.mktex/mktex /usr/local/bin/mktex\""
             exit 1
         fi
-        cd /tmp
-        echo -n Fetching update from github...
-        if git clone https://github.com/tmlarsson/mktex &>/dev/null; then
-            echo [OK]
-            cd mktex
-            if sudo mv mktex /usr/local/bin; then
-                echo $(date +%s) > /tmp/mktex-update
-                sed -e "s/"$idNow"/"$id"/" /usr/local/bin/mktex > /tmp/mktex-script
-                sudo cp /tmp/mktex-script /usr/local/bin/mktex
-                sudo chmod +x /usr/local/bin/mktex
-                echo "Succeded in installing the update!"
-            fi
-        else
-                echo "Failed to install update..."
-        fi
-        cd ../ && rm -rf mktex
-        exit 0
+        echo "Succeded in installing the update!"
     else
-        echo "ERROR: \""$installPath"\" is not a valid input."
-        exit 0
+        echo "Failed to install update..."
     fi
+    cd ../ && rm -rf mktex
+    exit 0
 fi
 
 
