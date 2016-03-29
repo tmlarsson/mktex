@@ -11,7 +11,7 @@ UPDATE=
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 
-
+# testing
 # Initial setup
 if [ ! -d ~/.mktex ]; then
     echo "Building initial setup..."
