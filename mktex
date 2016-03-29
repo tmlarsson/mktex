@@ -144,7 +144,7 @@ fi
 if [ ! -z $update ]; then
     # Install update
     cd ~/.mktex
-    git pull origin master
+    git pull --rebase --stat origin master
 
     exit 0
 fi
