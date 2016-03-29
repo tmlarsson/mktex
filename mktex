@@ -19,23 +19,6 @@ if [ ! -d ~/.mktex ]; then
     git clone ssh://github.com/tmlarsson/mktex ~/.mktex
 fi
 
-# Check if there is a need to check for update
-#if [ ! -f ~/.mktex/mktex-update ]; then
-#    date +%s > ~/.mktex/mktex-update
-#else
-#    timeUpdated=$(cat ~/.mktex/mktex-update)
-#    timeNow=$(date +%s)
-#    diff=$((timeNow-timeUpdated))
-#    if [ $diff -gt 25200 ]; then
-#        echo -n "Do you want to update? [y/n]: "
-#        read UPDATE
-#        echo $(date +%s) > ~/.mktex/mktex-update
-#        if [ "$UPDATE" == "y" -o "$UPDATE" == "Y" ]; then
-#            update=true
-#        fi
-#    fi
-#fi
-
 # Check for input
 if [ "$#" == 0 ]; then
     echo "No input..."
