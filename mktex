@@ -11,11 +11,6 @@ UPDATE=
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 
-# Check for input
-if [ "$#" == 0 ]; then
-    echo "No input..."
-    exit 1
-fi
 
 # Initial setup
 if [ ! -d ~/.mktex ]; then
@@ -39,6 +34,12 @@ else
             update=true
         fi
     fi
+fi
+
+# Check for input
+if [ "$#" == 0 ]; then
+    echo "No input..."
+    exit 1
 fi
 
 while [[ $# > 0 ]]
@@ -164,7 +165,11 @@ if [ ! -z $update ]; then
     fi
 
     # Install update
-    cd /tmp
+    cd ~/.mktex
+    git pull origin master
+
+    exit 0
+
     echo Fetching update from github...
     if [ -d "/tmp/mktex" ]; then
         rm -r mktex
