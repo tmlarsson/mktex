@@ -19,7 +19,9 @@ fi
 
 # Initial setup
 if [ ! -d ~/.mktex ]; then
-    mkdir ~/.mktex
+    echo "Building initial setup..."
+    echo ""
+    git clone ssh://github.com/tmlarsson/mktex ~/.mktex
 fi
 
 # Check if there is a need to check for update
@@ -174,7 +176,7 @@ if [ ! -z $update ]; then
         chmod +x ~/.mktex/mktex
         if [[ $EUID -ne 0 ]]; then
             echo ""
-            echo "Root needed to istall symlink to /usr/local/bin/"
+            echo "Root needed to install symlink to /usr/local/bin/"
             echo "Please run \"sudo ln -s ~/.mktex/mktex /usr/local/bin/mktex\""
             exit 1
         fi
