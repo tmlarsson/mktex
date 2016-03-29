@@ -20,21 +20,21 @@ if [ ! -d ~/.mktex ]; then
 fi
 
 # Check if there is a need to check for update
-if [ ! -f ~/.mktex/mktex-update ]; then
-    date +%s > ~/.mktex/mktex-update
-else
-    timeUpdated=$(cat ~/.mktex/mktex-update)
-    timeNow=$(date +%s)
-    diff=$((timeNow-timeUpdated))
-    if [ $diff -gt 25200 ]; then
-        echo -n "Do you want to update? [y/n]: "
-        read UPDATE
-        echo $(date +%s) > ~/.mktex/mktex-update
-        if [ "$UPDATE" == "y" -o "$UPDATE" == "Y" ]; then
-            update=true
-        fi
-    fi
-fi
+#if [ ! -f ~/.mktex/mktex-update ]; then
+#    date +%s > ~/.mktex/mktex-update
+#else
+#    timeUpdated=$(cat ~/.mktex/mktex-update)
+#    timeNow=$(date +%s)
+#    diff=$((timeNow-timeUpdated))
+#    if [ $diff -gt 25200 ]; then
+#        echo -n "Do you want to update? [y/n]: "
+#        read UPDATE
+#        echo $(date +%s) > ~/.mktex/mktex-update
+#        if [ "$UPDATE" == "y" -o "$UPDATE" == "Y" ]; then
+#            update=true
+#        fi
+#    fi
+#fi
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -141,55 +141,10 @@ fi
 # since you should NEVER run some random code of the internet 
 # which requires the sudo command without trusting it. NEVER!
 if [ ! -z $update ]; then
-    echo -n "Checking for updates..."
-    if ! wget -O ~/.mktex/mktex.html https://github.com/tmlarsson/mktex 2>/dev/null; then
-        echo "[Failed]"
-    exit 0
-    else
-        echo "[OK]"
-    fi
-    id=$(cat ~/.mktex/mktex.html |grep -oE -m 1 "mktex\/commit\/.{0,40}"|cut -c 14-)
-
-    if [ -f ~/.mktex/mktex-id ]; then
-        idNow=$(cat ~/.mktex/mktex-id)
-    else
-        echo $id > ~/.mktex/mktex-id
-        idNow=false
-    fi
-
-    if [ "$id" == "$idNow" ]; then
-        echo "No update available..."
-        exit 0
-    else
-        echo "Update available!"
-    fi
-
     # Install update
     cd ~/.mktex
     git pull origin master
 
-    exit 0
-
-    echo Fetching update from github...
-    if [ -d "/tmp/mktex" ]; then
-        rm -r mktex
-    fi
-    if git clone https://github.com/tmlarsson/mktex ; then
-        cd mktex
-        mv mktex ~/.mktex/
-        echo $(date +%s) > ~/.mktex/mktex-update
-        chmod +x ~/.mktex/mktex
-        if [[ $EUID -ne 0 ]]; then
-            echo ""
-            echo "Root needed to install symlink to /usr/local/bin/"
-            echo "Please run \"sudo ln -s ~/.mktex/mktex /usr/local/bin/mktex\""
-            exit 1
-        fi
-        echo "Succeded in installing the update!"
-    else
-        echo "Failed to install update..."
-    fi
-    cd ../ && rm -rf mktex
     exit 0
 fi
 
