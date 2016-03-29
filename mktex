@@ -19,7 +19,6 @@ if [ ! -d ~/.mktex ]; then
     git clone ssh://github.com/tmlarsson/mktex ~/.mktex
 fi
 
-# Test
 # Check if there is a need to check for update
 #if [ ! -f ~/.mktex/mktex-update ]; then
 #    date +%s > ~/.mktex/mktex-update
@@ -144,7 +143,8 @@ fi
 if [ ! -z $update ]; then
     # Install update
     cd ~/.mktex
-    git pull --rebase --stat origin master
+    git fetch --all -v
+    #git pull --rebase --stat origin master
 
     exit 0
 fi
