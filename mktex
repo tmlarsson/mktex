@@ -12,7 +12,7 @@ MINTED= # -shell-escape only needs to be used when minted is used due to potenti
 VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 
 # testing
-#asjkhdvajshdvj
+
 # Initial setup
 if [ ! -d ~/.mktex ]; then
     echo "Building initial setup..."
