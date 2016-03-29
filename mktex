@@ -11,10 +11,6 @@ UPDATE=
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 
-# testing
-if [ ! -d ~/.mktex ]; then
-fi
-
 # Initial setup
 if [ ! -d ~/.mktex ]; then
     echo "Building initial setup..."
@@ -129,7 +125,11 @@ fi
 if [ ! -z $update ]; then
     # Install update
     cd ~/.mktex
-    git pull --rebase --stat origin master
+    if git pull --rebase --stat origin master; then
+        echo "Updated mktex to most recent update"
+    else
+        echo "Failed to get update..."
+    fi
 
     exit 0
 fi
