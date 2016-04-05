@@ -15,7 +15,15 @@ VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
 if [ ! -d ~/.mktex ]; then
     echo "Building initial setup..."
     echo ""
-    git clone ssh://github.com/tmlarsson/mktex ~/.mktex
+    if ! git clone ssh://github.com/tmlarsson/mktex ~/.mktex; then
+        echo "Failed to get mktex..."
+        exit 0
+    else
+        echo ""
+        echo "To continue, you need to add ~/.mktex to your"
+        echo "path or add a symlink to /usr/local/bin or similar."
+    fi
+    
 fi
 
 # Check for input
@@ -214,15 +222,12 @@ if [ "$TIKZ" == true ]; then
         echo ""
         echo "Warnings:________________________"
         echo ""
-        echo "$tikzresult"
+        echo -E "$tikzresult"
         tikzERR=$(cat /tmp/tikzERR)
-        echo "skjdbakjdkksjdhjasldh"
-        echo "$tikzERR"
-        echo "asgdashjdgajhsdg"
         if [ ! -z "$tikzERR" ]; then
             echo ""
             echo "ERRORS:__________________________"
-            echo "$tikzERR"
+            echo -E "$tikzERR"
             echo ""
         fi
     fi    
@@ -301,12 +306,13 @@ elif [ ! -z "$result" ]; then
     echo "Compiled with warnings in $compiler..."
     echo ""
     echo "Warnings:________________________"
-    echo -e "$result"           # echo -e to print new line when \n is written
+    #echo -e "$result"           # echo -e to print new line when \n is written
+    printf '%s' "$result"           # echo -e to print new line when \n is written
     latexERR=$(cat /tmp/latexerr)
     if [ ! -z "$latexERR" ]; then
         echo ""
         echo "ERRORS:__________________________"
-        echo "$latexERR"
+        echo -e "$latexERR"
         echo ""
     fi
 elif [ ! -z "$bibRES" ]; then
@@ -314,11 +320,11 @@ elif [ ! -z "$bibRES" ]; then
     echo "Compiled with errors in biber..."
     echo ""
     echo "Warnings:________________________"
-    echo "$bibRES"
+    echo -e "$bibRES"
     if [ ! -z "$bibERR" ]; then
         echo ""
         echo "ERRORS:________________________"
-        echo "$bibERR"
+        echo -e "$bibERR"
     fi
 fi
 fi
