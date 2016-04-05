@@ -53,16 +53,10 @@
     echo "Error: git is not installed"
     exit 1
   }
-  env git clone --depth=1 https://github.com/tmlarsson/mktex.git $ZSH || {
+  env git clone --depth=1 https://github.com/tmlarsson/mktex.git $MKTEX || {
     printf "Error: git clone of mkTeX repo failed\n"
     exit 1
   }
-
-  printf "${BLUE}Looking for an existing zsh config...${NORMAL}\n"
-  if [ -f ~/.zshrc ] || [ -h ~/.zshrc ]; then
-    printf "${YELLOW}Found ~/.zshrc.${NORMAL} ${GREEN}Backing up to ~/.zshrc.pre-oh-my-zsh${NORMAL}\n";
-    mv ~/.zshrc ~/.zshrc.pre-oh-my-zsh;
-  fi
 
     if [ $SHELL == "/bin/zsh" ]; then
         printf "${BLUE}Copying your current PATH and adding it to the end of ~/.zshrc for you.${NORMAL}\n"
@@ -82,7 +76,7 @@
 
 
   printf "${GREEN}"
-    echo '	          __ ______  __   __'
+    echo '	    __ ______  __   __'
     echo '           | |__   __| \ \ / /'
     echo '  _ __ ___ | | _| | ___ \ V / '
     echo ' | ` `  _ \| |/ / |/ _ \ > <  '
