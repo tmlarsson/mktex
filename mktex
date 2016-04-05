@@ -9,7 +9,7 @@ BIBER=false
 CLEAN=false
 UPDATE=
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
-VERBOSE='grep -iE "^.*:[0-9]*:.*\|warning\| error .*$"'
+VERBOSE='grep -i "^.*:[0-9]*:.*\|warning\| error .*$"'
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -198,12 +198,12 @@ if [ "$TIKZ" == true ]; then
         echo ""
         echo "Warnings:________________________"
         echo ""
-        echo -E "$tikzresult"
+        printf '%s' "$tikzresult"
         tikzERR=$(cat /tmp/tikzERR)
         if [ ! -z "$tikzERR" ]; then
             echo ""
             echo "ERRORS:__________________________"
-            echo -E "$tikzERR"
+            printf '%s' "$tikzERR"
             echo ""
         fi
     fi    
@@ -282,13 +282,12 @@ elif [ ! -z "$result" ]; then
     echo "Compiled with warnings in $compiler..."
     echo ""
     echo "Warnings:________________________"
-    #echo -e "$result"           # echo -e to print new line when \n is written
     printf '%s' "$result"           # echo -e to print new line when \n is written
     latexERR=$(cat /tmp/latexerr)
     if [ ! -z "$latexERR" ]; then
         echo ""
         echo "ERRORS:__________________________"
-        echo -e "$latexERR"
+        printf '%s' "$latexERR"
         echo ""
     fi
 elif [ ! -z "$bibRES" ]; then
@@ -296,11 +295,11 @@ elif [ ! -z "$bibRES" ]; then
     echo "Compiled with errors in biber..."
     echo ""
     echo "Warnings:________________________"
-    echo -e "$bibRES"
+    printf '%s' "$bibRES"
     if [ ! -z "$bibERR" ]; then
         echo ""
         echo "ERRORS:________________________"
-        echo -e "$bibERR"
+        printf '%s' "$bibERR"
     fi
 fi
 fi
