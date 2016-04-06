@@ -12,6 +12,13 @@ MINTED= # -shell-escape only needs to be used when minted is used due to potenti
 VERBOSE='grep -i "^.*:[0-9]*:.*\|warning\| error .*$"'
 VERSION=
 
+# Colours
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+NORMAL=$(tput sgr0)
+
 # Check for input
 if [ "$#" == 0 ]; then
     echo "No input..."
@@ -65,7 +72,7 @@ case $key in
             TEMP=${TEMP%.}
         fi
         if [[ ${TEMP:0:1} == - ]]; then
-            echo "ERROR: \"$TEMP\" is not a valid argument..."
+            echo "${RED}ERROR:${NORMAL} \"$TEMP\" is not a valid argument..."
             echo ""
             echo "Here is the help for you:"
             echo ""
@@ -133,7 +140,7 @@ if [ ! -z $gettex ]; then
     
     if git clone https://github.com/tmlarsson/latex-template &>/dev/null
     then
-        echo "[OK]"
+        echo "[${GREEN}OK${NORMAL}]"
         cd latex-template ||exit
         echo -n "Presentation or Report? [p/r]: "
         read -r doc
@@ -142,20 +149,20 @@ if [ ! -z $gettex ]; then
         elif [ "$doc" == "r" ]; then
             cd Report ||exit
         else
-            echo "ERROR: \" $doc \" is not a valid input."
+            echo "${RED}ERROR:${NORMAL} \" $doc \" is not a valid input."
             exit 0
         fi
 
         if ! mv ./*.tex "$dir" ;
         then
-            echo "ERROR: The directory $dir does not exist."
+            echo "${RED}ERROR:${NORMAL} The directory $dir does not exist."
             exit 0
         fi
         cd ..
         rm -rf latex-template
     else
         echo ""
-        echo "ERROR: Failed to get template."
+        echo "${RED}ERROR:${NORMAL} Failed to get template."
     fi
     exit 0
 fi
@@ -170,7 +177,7 @@ if [ -z $compiler ]; then
     then
         compiler="pdflatex"
     else
-        echo "ERROR: No supported compiler is installed."
+        echo "${RED}ERROR:${NORMAL} No supported compiler is installed."
         exit 0
     fi
 fi
@@ -178,7 +185,7 @@ fi
 # Check if no filename is specified.
 # If no filename is given then exit the program
 if [ -z "$FILENAME" ]; then
-    echo "ERROR: No filename was specified."
+    echo "${RED}ERROR:${NORMAL} No filename was specified."
     exit 0
 fi
 
@@ -192,18 +199,18 @@ if [ "$TIKZ" == true ]; then
     tikzresult=$(max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" 2>/tmp/tikzERR "$VERBOSE")
 
     if [ -z "$tikzresult" ]; then
-        echo "[OK]"
+        echo "[${GREEN}OK${NORMAL}]"
     else
         echo ""
         echo "Compiled with warnings in $compiler..."
         echo ""
-        echo "Warnings:________________________"
+        echo "${YELLOW}Warnings:________________________${NORMAL}"
         echo ""
         printf '%s' "$tikzresult"
         tikzERR=$(cat /tmp/tikzERR)
         if [ ! -z "$tikzERR" ]; then
             echo ""
-            echo "ERRORS:__________________________"
+            echo "${RED}Errors:________________________${NORMAL}"
             printf '%s' "$tikzERR"
             echo ""
         fi
@@ -228,7 +235,7 @@ fi
 # not present in the second sweep.
 echo -n "$compiler: First sweep..."
 max_print_line=2048 $compiler $MINTED -interaction=nonstopmode -file-line-error "${FILENAME%.tex}" >/dev/null 2>&1
-echo "[OK]"
+echo "[${GREEN}OK${NORMAL}]"
 
 # If one uses biber for references one also has to compile 
 # with biber. One bug, at least on OS X happens sometimes
@@ -241,7 +248,7 @@ if [ "$BIBER" == true ]; then
         biber "$FILENAME" 1>/tmp/bibres 2>/tmp/biberr
         bibRES=$(cat </tmp/bibres | grep -i "^.*:[0-9]*:.*\|warn\| error .*$")
         bibERR=$(</tmp/biberr)
-        echo "[OK]"
+        echo "[${GREEN}OK${NORMAL}]"
 
         # Check fo data bug in biber
         vartest=$(echo "$bibERR" | grep "no data found")
@@ -272,7 +279,7 @@ if [ ! -z "$temp" ]; then
 fi
 
 
-echo "[OK]"
+echo "[${GREEN}OK${NORMAL}]"
 
 # Prints the result, if there is any errors to display.
 if [ -z "$result" ] && [ -z "$bibRES" ]; then
@@ -282,12 +289,12 @@ elif [ ! -z "$result" ]; then
     echo ""
     echo "Compiled with warnings in $compiler..."
     echo ""
-    echo "Warnings:________________________"
+    echo "${YELLOW}Warnings:________________________${NORMAL}"
     printf '%s' "$result"           # echo -e to print new line when \n is written
     latexERR=$(cat /tmp/latexerr)
     if [ ! -z "$latexERR" ]; then
         echo ""
-        echo "ERRORS:__________________________"
+        echo "${RED}Errors:________________________${NORMAL}"
         printf '%s' "$latexERR"
         echo ""
     fi
@@ -295,11 +302,11 @@ elif [ ! -z "$bibRES" ]; then
     echo ""
     echo "Compiled with errors in biber..."
     echo ""
-    echo "Warnings:________________________"
+    echo "${YELLOW}Warnings:________________________${NORMAL}"
     printf '%s' "$bibRES"
     if [ ! -z "$bibERR" ]; then
         echo ""
-        echo "ERRORS:________________________"
+        echo "${RED}Errors:________________________${NORMAL}"
         printf '%s' "$bibERR"
     fi
 fi
