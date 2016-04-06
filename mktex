@@ -115,7 +115,7 @@ if [ "$HELP" == true ]; then
 fi
 
 # Updates mktex.
-if [ ! -z $update ]; then
+if [ ! -z $UPDATE ]; then
     # Install update
     cd ~/.mktex ||exit
     if git pull --rebase --stat origin master; then
