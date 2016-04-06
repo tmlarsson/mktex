@@ -57,9 +57,7 @@ case $key in
     ;;
     *)
     TEMP="$1"
-    echo "Test 1"
     if [ -z "$UPDATE" ] && [ -z "$VERSION" ]; then
-        echo "Test 2"
         if [[ $TEMP =~ .tex ]]; then
             TEMP=${TEMP%.tex}
         fi
