@@ -7,9 +7,10 @@ clear
 # Initial setup
 BIBER=false
 CLEAN=false
-UPDATE=
+UPDATE=""
 MINTED= # -shell-escape only needs to be used when minted is used due to potentially security flaw.
 VERBOSE='grep -i "^.*:[0-9]*:.*\|warning\| error .*$"'
+VERSION=
 
 # Check for input
 if [ "$#" == 0 ]; then
@@ -43,7 +44,7 @@ case $key in
     TIKZ=true
     ;;
     --update)
-    update=true
+    UPDATE=true
     ;;
     --gettex)
     gettex=true
@@ -56,7 +57,9 @@ case $key in
     ;;
     *)
     TEMP="$1"
-    if [ ! -z "$UPDATE" ] && [ ! -z "$VERSION" ]; then
+    echo "Test 1"
+    if [ -z "$UPDATE" ] && [ -z "$VERSION" ]; then
+        echo "Test 2"
         if [[ $TEMP =~ .tex ]]; then
             TEMP=${TEMP%.tex}
         fi
