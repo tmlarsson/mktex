@@ -33,6 +33,7 @@
 
   if [ ! -n "$MKTEX" ]; then
     MKTEX=~/.mktex
+    echo $MKTEX
   fi
 
   if [ -d "$MKTEX" ]; then
@@ -57,22 +58,22 @@
     printf "Error: git clone of mkTeX repo failed\n"
     exit 1
   }
-
-    if [ $SHELL == "/bin/zsh" ]; then
-        printf "${BLUE}Copying your current PATH and adding it to the end of ~/.zshrc for you.${NORMAL}\n"
-        sed "/export PATH=/ c\\
-        export PATH=\"$PATH\"
-        " ~/.zshrc > ~/.zshrc-omztemp
-        mv -f ~/.zshrc-omztemp ~/.zshrc
-    elif [ $SHELL == "/bin/bash" ]; then
-        printf "${BLUE}Copying your current PATH and adding it to the end of ~/.zshrc for you.${NORMAL}\n"
-        sed "/export PATH=/ c\\
-        export PATH=\"$PATH\"
-        " ~/.bashrc > ~/.bashrc-temp
-        mv -f ~/.bashrc-temp ~/.bashrc
-    else
-        printf "${RED} No supported shell used. Only zsh and bash are supported${NORMAL}\n."
-    fi
+   # if [ $SHELL == "/bin/zsh" ]; then
+   #     printf "${BLUE}Copying your current PATH and adding it to the end of ~/.zshrc for you.${NORMAL}\n"
+   #     sed "/export PATH="$MKTEX"\\
+   #     export PATH=\"$PATH\"
+   #     " ~/.zshrc > ~/.zshrc-temp
+   #     echo "test 2"
+   #     mv -f ~/.zshrc-temp ~/.zshrc
+   # elif [ $SHELL == "/bin/bash" ]; then
+   #     printf "${BLUE}Copying your current PATH and adding it to the end of ~/.zshrc for you.${NORMAL}\n"
+   #     sed "/export PATH=/ c\\
+   #     export PATH=\"$PATH\"
+   #     " ~/.bashrc > ~/.bashrc-temp
+   #     mv -f ~/.bashrc-temp ~/.bashrc
+   # else
+   #     printf "${RED} No supported shell used. Only zsh and bash are supported${NORMAL}\n."
+   # fi
 
 
   printf "${GREEN}"
